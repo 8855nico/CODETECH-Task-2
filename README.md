@@ -8,7 +8,7 @@
 
 **Duration:** JULY 15TH TO AUGUST 15TH,2024
 
-**Mentor:**Muzammil Ahmed
+**Mentor:** Muzammil Ahmed
 
 
 ## Overview of Project
@@ -91,29 +91,29 @@ Connect the BMP180 sensor to measure atmospheric pressure.
 #### Arduino with DHT22 and BMP180:
 
 
--**Connect the DHT22 and BMP180 sensors to the Arduino.
+-**Connect the DHT22 and BMP180 sensors to the Arduino.**
 
--**Use the ESP8266 module for WiFi connectivity.
+-**Use the ESP8266 module for WiFi connectivity.**
 
 
 #### Raspberry Pi with DHT22 and BMP180:
 
--**Connect the DHT22 and BMP180 sensors to the Raspberry Pi GPIO pins.
+-**Connect the DHT22 and BMP180 sensors to the Raspberry Pi GPIO pins.**
 
--**Use the built-in WiFi for connectivity.
+-**Use the built-in WiFi for connectivity.**
 
 
 ## Firmware Development:
 
--** Arduino
--** Raspberry Pi 
+-**Arduino**
+-**Raspberry Pi** 
 
  
 ## Backend Server Setup:
 
--** Develop a server using Flask (Python) to handle incoming data from the microcontroller.
+-**Develop a server using Flask (Python) to handle incoming data from the microcontroller.**
 
-_** Store the data in a database (e.g., SQLite, PostgreSQL).
+_**Store the data in a database (e.g., SQLite, PostgreSQL).**
 
 
 ## Dashboard/Mobile App Development:
