@@ -1,0 +1,223 @@
+Firmware Development:
+Arduino Example:
+
+#include <DHT.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BMP085.h>
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+
+#define DHTPIN 2
+#define DHTTYPE DHT22
+
+const char* ssid = "your-SSID";
+const char* password = "your-PASSWORD";
+const char* mqtt_server = "your-MQTT-SERVER";
+
+DHT dht(DHTPIN, DHTTYPE);
+Adafruit_BMP085 bmp;
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  bmp.begin();
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
+}
+
+void setup_wifi() {
+  delay(10);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+}
+
+void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
+
+  float humidity = dht.readHumidity();
+  float temperature = dht.readTemperature();
+  float pressure = bmp.readPressure() / 100.0F;
+
+  String payload = "{\"temperature\": " + String(temperature) + ", \"humidity\": " + String(humidity) + ", \"pressure\": " + String(pressure) + "}";
+  client.publish("weather/data", (char*) payload.c_str());
+
+  delay(60000);
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    if (client.connect("ArduinoClient")) {
+      client.subscribe("weather/data");
+    } else {
+      delay(5000);
+    }
+  }
+}
+
+Raspberry Pi
+
+python
+
+import Adafruit_DHT
+import Adafruit_BMP.BMP085 as BMP085
+import time
+import json
+import paho.mqtt.client as mqtt
+
+DHT_SENSOR = Adafruit_DHT.DHT22
+DHT_PIN = 4
+BMP_SENSOR = BMP085.BMP085()
+
+MQTT_SERVER = "your-MQTT-SERVER"
+MQTT_PATH = "weather/data"
+
+client = mqtt.Client()
+client.connect(MQTT_SERVER, 1883, 60)
+
+while True:
+    humidity, temperature = Adafruit_DHT.read_retry(DHT_SENSOR, DHT_PIN)
+    pressure = BMP_SENSOR.read_pressure() / 100.0
+
+    data = {
+        "temperature": temperature,
+        "humidity": humidity,
+        "pressure": pressure
+    }
+
+    client.publish(MQTT_PATH, json.dumps(data))
+    time.sleep(60)
+
+
+Flask Server 
+
+python
+
+
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///weather.db'
+db = SQLAlchemy(app)
+
+class WeatherData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    temperature = db.Column(db.Float, nullable=False)
+    humidity = db.Column(db.Float, nullable=False)
+    pressure = db.Column(db.Float, nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+@app.route('/data', methods=['POST'])
+def data():
+    data = request.json
+    new_data = WeatherData(
+        temperature=data['temperature'],
+        humidity=data['humidity'],
+        pressure=data['pressure']
+    )
+    db.session.add(new_data)
+    db.session.commit()
+    return jsonify({'status': 'success'}), 201
+
+@app.route('/data', methods=['GET'])
+def get_data():
+    data = WeatherData.query.all()
+    result = [
+        {
+            'temperature': d.temperature,
+            'humidity': d.humidity,
+            'pressure': d.pressure,
+            'timestamp': d.timestamp
+        } for d in data
+    ]
+    return jsonify(result)
+
+if __name__ == '__main__':
+    db.create_all()
+    app.run(host='0.0.0.0', port=5000)
+
+
+
+
+Dashboard/Mobile App Development:
+React Dashboard 
+
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+
+function App() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios.get('http://your-flask-server/data');
+      setData(result.data);
+    };
+    fetchData();
+  }, []);
+
+  return (
+    <div>
+      <h1>Weather Monitoring Dashboard</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Temperature (°C)</th>
+            <th>Humidity (%)</th>
+            <th>Pressure (hPa)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((entry, index) => (
+            <tr key={index}>
+              <td>{new Date(entry.timestamp).toLocaleString()}</td>
+              <td>{entry.temperature}</td>
+              <td>{entry.humidity}</td>
+              <td>{entry.pressure}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
