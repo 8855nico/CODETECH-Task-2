@@ -27,24 +27,24 @@ The goal of this project is to build an IoT-based weather monitoring station tha
 
 ### Hardware Components:
 
-**Microcontroller/Single-Board Computer:** Raspberry Pi or Arduino
+-**Microcontroller/Single-Board Computer:** Raspberry Pi or Arduino
 
-**Sensors:** DHT22 (Temperature and Humidity), BMP180 (Atmospheric Pressure)
+-**Sensors:** DHT22 (Temperature and Humidity), BMP180 (Atmospheric Pressure)
 
-**WiFi Module:** ESP8266 for Arduino or built-in WiFi on Raspberry Pi
+-**WiFi Module:** ESP8266 for Arduino or built-in WiFi on Raspberry Pi
 
-**Power Supply:** Adequate power supply for the microcontroller and sensors
+-**Power Supply:** Adequate power supply for the microcontroller and sensors
 
 
 
 ### Software Components:
 
 
-**Firmware for Microcontroller:** Code running on Arduino/Raspberry Pi to read sensor data
+-**Firmware for Microcontroller:** Code running on Arduino/Raspberry Pi to read sensor data
 
-**Backend Server:** To handle data collection and storage
+-**Backend Server:** To handle data collection and storage
 
-**Dashboard/Mobile App:** For real-time data visualization
+-**Dashboard/Mobile App:** For real-time data visualization
 
 
 ## System Architecture
